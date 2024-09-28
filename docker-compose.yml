@@ -1,22 +1,24 @@
 version: "3.1"
 
-services:
+services: #we declare all docker services in this section. See the indentation
   postgres:
-    build: ./postgres
+    build: ./postgres # this line asks docker to check for "Dockerfile" in this folder
     ports:
-      - 5432:5432
-    environment:
+      - 5432:5432 # communication on 5432 external port is transferred to 5432 internally on which postgres runs
+    environment: #data here is used to create below details in postgres container when it loads first time
       POSTGRES_USER: root # Replace with your desired username
       POSTGRES_PASSWORD: password # Replace with your desired password
       POSTGRES_DB: userms
-    volumes:
+    volumes: #this is a bind mount. Data from "/var/lib/postgresql/data"
+      #is mirrored to "./postgres-data" in current folder
+      #to avoid loss of data
       - ./postgres-data:/var/lib/postgresql/data
 
   gateway:
     build: ./gateway
     ports:
       - 8080:8080
-    depends_on:
+    depends_on: #below tells dont start these containers before starting the below ones
       - postgres
       - eurekams
 
